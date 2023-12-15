@@ -51,3 +51,4 @@ Route::put('/concepto/addConceptos', [ConceptoController::class, 'upConceptos'])
 Route::get('/clientes/allClientes', [ClientController::class, 'getAllClientes']);
 Route::get('/clientes/getClientById/{id}', [ClientController::class, 'getClientById']);
 Route::put('/clientes/editClient/{id}', [ClientController::class, 'editClient']);
+
