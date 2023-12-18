@@ -42,6 +42,7 @@ Route::get('/cotizaciones/getCotizacionById/{id}', [CotizacionesController::clas
 Route::post('/cotizaciones/new-cotizacion', [CotizacionesController::class, 'createCotizacion']);
 Route::put('/cotizaciones/editCotizacion/{id}', [CotizacionesController::class, 'editCotizacion']);
 Route::put('/cotizaciones/changeArea/{id}', [CotizacionesController::class, 'changeArea']);
+Route::put('/cotizaciones/changeUrgencia/{id}', [CotizacionesController::class, 'changeUrgencia']);
 Route::delete('/cotizaciones/deleteCotizacion/{id}', [CotizacionesController::class, 'deleteCotizacion']);
 Route::put('/cotizaciones/confirmarCotizacion', [CotizacionesController::class, 'confirmarCotizacion']);
 

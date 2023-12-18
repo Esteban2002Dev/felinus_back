@@ -12,17 +12,15 @@ class cotizaciones extends Model
     protected $fillable = [
         'clave_cotizacion',
         'fecha_pedido',
-        // 'nombre_cliente',
-        // 'telefono',
-        // 'email',
         'descripcion',
         'estado',
         'total',
         'zona',
-        'cliente_id'
+        'cliente_id',
+        'urgencia',
+        'urgencia_estado',
     ];
 
-    // Relación con el modelo Concepto (debería ser en plural)
     public function productos()
     {
         return $this->hasMany(Concepto::class, 'cotizacion_id');

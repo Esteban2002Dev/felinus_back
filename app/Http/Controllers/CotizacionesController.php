@@ -20,7 +20,10 @@ class CotizacionesController extends Controller {
     }
 
     public function getVenta() {
-        $cotizaciones = cotizaciones::where('estado', '=', 'vendido') -> get();
+        $cotizaciones = cotizaciones::where(function($query) {
+            $query -> where('estado', '=', 'vendido')
+                    -> orWhere('estado', '=', 'urgente');
+            }) -> get();        
         foreach($cotizaciones as $cot) {
             $cot -> load('productos');
             $cot -> load('cliente');
@@ -54,11 +57,11 @@ class CotizacionesController extends Controller {
         $cotizacion = cotizaciones::create([
             'clave_cotizacion' => 'uni'. '-' . uniqid(),
             'fecha_pedido' => $venta_info['fecha_pedido'],
-            // 'nombre_cliente' => $venta_info['nombre_cliente'],
-            // 'telefono' => $venta_info['telefono'],
-            // 'email' => $venta_info['email'],
             'descripcion' => $venta_info['descripcion'],
+            'urgencia' => $venta_info['urgencia'],
+            'urgencia_estado' => $venta_info['urgencia'] == 'normal' ? 'normal' : 'pending',
             'total' => $venta_info['total'],
+            'estado' => $venta_info['urgencia'] == 'urgente' ? 'urgente' : 'cotizacion',
             'cliente_id' => $venta_info['cliente_id'] == 0 ? $client -> id : $venta_info['cliente_id'],
         ]);
         
@@ -79,6 +82,7 @@ class CotizacionesController extends Controller {
     public function editCotizacion( Request $request, $id ) {
         $cotizacion = cotizaciones::find($id);
         $client = Client::find($cotizacion -> cliente_id);
+
         if ( is_null($cotizacion) || is_null($client) ) {
             return response() -> json(['message' => 'cotizacion not found'], 404);
         }
@@ -88,6 +92,22 @@ class CotizacionesController extends Controller {
             'email' => $request -> email,
         ]);
         $cotizacion -> update($request -> all());
+        $cotizacion -> load('productos'); // ! ----------- ! //S
+        $cotizacion -> load('cliente'); // ! ----------- ! //S
+        return response() -> json($cotizacion, 200);
+    }
+
+    public function changeUrgencia( Request $request, $id ) {
+        $cotizacion = cotizaciones::find($id);
+
+        if ( is_null($cotizacion) ) {
+            return response() -> json(['message' => 'cotizacion not found'], 404);
+        }
+        $cotizacion -> update([
+            'urgencia_estado' => $request -> urgencia,
+            'estado' => $request -> urgencia == 'aceptado' ? 'vendido' : 'cotizacion',
+            'urgencia' => $request -> urgencia == 'aceptado' ? 'urgente' : 'normal',
+        ]);
         $cotizacion -> load('productos'); // ! ----------- ! //S
         $cotizacion -> load('cliente'); // ! ----------- ! //S
         return response() -> json($cotizacion, 200);

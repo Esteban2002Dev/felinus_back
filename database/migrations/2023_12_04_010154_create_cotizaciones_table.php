@@ -21,6 +21,8 @@ return new class extends Migration
             $table->text('descripcion');
             $table->text('zona') -> default('diseño');
             $table->text('estado') -> default('cotizacion');
+            $table->text('urgencia');
+            $table->text('urgencia_estado') -> default('pending');
             $table->integer('total');
             $table->foreignId('cliente_id')->constrained('clients')->onDelete('restrict');
             $table->timestamps();
